@@ -89,6 +89,7 @@ export const pasteRouter: FastifyPluginAsync<{}> = async (
             properties: {
               language: {
                 type: 'string',
+                enum: ['javascript', 'typescript', 'markdown', 'text'],
               },
               expire: {
                 type: 'string',

@@ -1,5 +1,14 @@
 @use '_layout.scss';
 
-.editor {
+.editor,
+.markdown {
   @include layout.hundred;
+}
+
+// for markdown
+.hidden {
+  display: none;
+}
+.markdown {
+  padding: 4px;
 }

@@ -46,6 +46,13 @@
         <a href="/paste/burn/<%= state.key %>" name="burn" class="button danger small">burn 🔥</a>
       </div>
     <% } %>
+
+    <% if (state.language === 'markdown') { %> 
+      <div class="row">
+        <a name="toggle-source" class="button primary small">view source</a>
+      </div>
+    <% } %>
+
     <div class="row">
       <a name="save-to-disk" class="button primary small">save</a>
     </div>

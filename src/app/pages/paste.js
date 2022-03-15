@@ -1,7 +1,42 @@
 import { decodeB64, decryptData } from '../crypto'
 import * as monaco from 'monaco-editor'
 import editor from '../editor/init'
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 import mime from 'mime-types'
+
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  sanitize: DOMPurify.sanitize,
+})
+
+async function renderMarkdown(md) {
+  // TODO: run on worker ?
+  const rendered = marked.parse(md)
+  const $div = document.createElement('div')
+
+  const $toggleBtn = document.getElementsByName('toggle-source')[0]
+  $toggleBtn.addEventListener('click', (e) => {
+    if ($editor.classList.contains('hidden')) {
+      $div.className = 'markdown hidden'
+      $editor.className = 'editor'
+      $toggleBtn.innerText = 'view markdown'
+    } else {
+      $div.className = 'markdown'
+      $editor.className = 'editor hidden'
+      $toggleBtn.innerText = 'view source'
+    }
+  })
+
+  const $editor = document.getElementById('editor')
+  $editor.className = 'hidden'
+
+  $div.className = 'markdown'
+  $div.innerHTML = rendered
+
+  document.body.appendChild($div)
+}
 
 async function onLoad() {
   const res = await fetch(`/paste/hydrate/${_HYDRATE.key}`)
@@ -46,7 +81,12 @@ async function onLoad() {
   )
   editor.setValue(data)
   editor.updateOptions({ readOnly: true })
+
   delete _HYDRATE.data
+
+  if (_HYDRATE.language && _HYDRATE.language === 'markdown') {
+    await renderMarkdown(data)
+  }
 }
 
 if (editor) {
