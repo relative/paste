@@ -6,12 +6,14 @@ import {
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { verifyUser } from '../verifyUser'
 import { pool } from '../database'
+import utc from 'dayjs/plugin/utc'
 import { nanoid } from 'nanoid'
 import mime from 'mime-types'
 import path from 'path'
 import ms from 'ms'
 import dayjs from 'dayjs'
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
 
 function v2b(val?: 'on' | 'off') {
   return val ? val === 'on' : false
@@ -25,20 +27,11 @@ interface Paste {
   encrypted: boolean
   ephemeral: boolean
   data: string
-  delete_at: Date
+  delete_at: dayjs.Dayjs
   iv?: string
 }
-function dateToUTC(date: Date) {
-  var d = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    date.getUTCHours(),
-    date.getUTCMinutes(),
-    date.getUTCSeconds()
-  )
-
-  return new Date(d)
+function utcToLocal(date: string) {
+  return dayjs.utc(date).local()
 }
 async function getPaste(key: string): Promise<Paste> {
   const q = await pool.query(
@@ -52,7 +45,9 @@ async function getPaste(key: string): Promise<Paste> {
   }
   const row = q.rows[0]
   const p = row as Paste
-  if (dateToUTC(new Date()).getTime() > p.delete_at.getTime()) {
+  p.delete_at = utcToLocal(row.delete_at)
+
+  if (dayjs().isAfter(p.delete_at)) {
     await burnPaste(p.id)
     const ex = new Error('Paste does not exist or was deleted')
     ;(ex as any).statusCode = 404
@@ -148,7 +143,7 @@ export const pasteRouter: FastifyPluginAsync<{}> = async (
           language = body.language || 'text',
           encrypted = v2b(body.encrypt),
           ephemeral = v2b(body.ephemeral),
-          deleteAt = new Date(Date.now() + ms(expire)).toISOString()
+          deleteAt = dayjs.utc().add(ms(expire), 'ms')
 
         if (encrypted && !body.iv) throw 'missing IV'
 
@@ -198,7 +193,7 @@ export const pasteRouter: FastifyPluginAsync<{}> = async (
         ephemeral: paste.ephemeral,
         language: paste.language,
         expires: paste.delete_at,
-        expiresPretty: dayjs(paste.delete_at).fromNow(false),
+        expiresPretty: dayjs.utc(paste.delete_at).fromNow(false),
 
         user_id: paste.user_id,
       }
