@@ -113,11 +113,10 @@ fastify
   })
 
 export function listen() {
-  fastify.listen(parseInt(process.env.PORT || '3000'), (err, addr) => {
+  fastify.listen(process.env.PORT || 3000, (err, addr) => {
     if (err) {
       fastify.log.error(err)
       process.exit(1)
     }
-    fastify.log.info('Listening on', addr)
   })
 }
