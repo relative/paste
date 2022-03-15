@@ -28,6 +28,18 @@ interface Paste {
   delete_at: Date
   iv?: string
 }
+function dateToUTC(date: Date) {
+  var d = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  )
+
+  return new Date(d)
+}
 async function getPaste(key: string): Promise<Paste> {
   const q = await pool.query(
     'SELECT id, user_id, key, language, encrypted, ephemeral, delete_at, data, iv FROM paste WHERE key = $1',
@@ -40,7 +52,7 @@ async function getPaste(key: string): Promise<Paste> {
   }
   const row = q.rows[0]
   const p = row as Paste
-  if (Date.now() > p.delete_at.getTime()) {
+  if (dateToUTC(new Date()).getTime() > p.delete_at.getTime()) {
     await burnPaste(p.id)
     const ex = new Error('Paste does not exist or was deleted')
     ;(ex as any).statusCode = 404
@@ -136,7 +148,7 @@ export const pasteRouter: FastifyPluginAsync<{}> = async (
           language = body.language || 'text',
           encrypted = v2b(body.encrypt),
           ephemeral = v2b(body.ephemeral),
-          deleteAt = new Date(Date.now() + ms(expire))
+          deleteAt = new Date(Date.now() + ms(expire)).toISOString()
 
         if (encrypted && !body.iv) throw 'missing IV'
 
