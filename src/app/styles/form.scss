@@ -1,0 +1,139 @@
+@use '_layout.scss';
+
+$animation: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+input[type='checkbox'] {
+  appearance: none;
+  background: transparent;
+  margin: 0;
+  margin-right: 4px;
+  font: inherit;
+  width: 17px;
+  height: 17px;
+  border: 1px solid $primary-focus;
+  @include layout.flex-center;
+  transition: border-color 100ms $animation;
+
+  &:hover {
+    border-color: $primary-hover;
+  }
+
+  &::before {
+    content: '';
+    width: 13px;
+    height: 13px;
+    transform: scale(0);
+    transition: transform 100ms $animation;
+    box-shadow: inset 1em 1em 0px 1px $primary;
+  }
+  &:checked::before {
+    transform: scale(1);
+  }
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    @include layout.row-center;
+    font-size: 12px;
+    select {
+      width: 100%;
+    }
+    & + label {
+      margin-top: 1em;
+    }
+  }
+}
+
+.input {
+  background: $background-dark;
+  color: $color;
+  font: $font;
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.32);
+  padding: 4px;
+  border-radius: 4px;
+  position: relative;
+
+  width: 18em;
+  height: 35px;
+
+  transition: border 150ms $animation;
+
+  &:active,
+  &:focus {
+    border: 1px solid rgba(255, 255, 255, 0.19);
+  }
+
+  &.inline {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
+}
+
+@mixin button-color($buttonColor, $textColor) {
+  &.#{$buttonColor} {
+    background: map-get($colors, #{$buttonColor});
+    color: $textColor !important;
+    &:focus {
+      box-shadow: 0 0 0 0.15rem map-get($colors, #{$buttonColor}-focus);
+    }
+    &:hover {
+      background: map-get($colors, #{$buttonColor}-hover);
+    }
+    &:active {
+      background: map-get($colors, #{$buttonColor}-active);
+    }
+  }
+}
+
+.button {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-transform: none;
+  border: none;
+  border: 2px solid transparent;
+
+  @include layout.flex;
+  @include layout.center;
+
+  height: 35px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 0.5em 0.5em;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s $animation, box-shadow 0.2s $animation;
+
+  @include button-color(primary, $color);
+  @include button-color(danger, #454158);
+
+  &:disabled {
+    cursor: not-allowed;
+    border: 2px solid $border-focus !important;
+    background: transparent !important;
+  }
+
+  &.inline {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  sup {
+    font-size: 11px;
+  }
+
+  &.small {
+    font: $font;
+    font-weight: 600;
+    height: 14px;
+    border-radius: 4px;
+    width: 100%;
+  }
+}

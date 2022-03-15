@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/index.css" />
+    <title>paste</title>
+  </head>
+  <body>
+    <%- body %>
+    <% if (typeof state !== 'undefined') { %>
+    <script>window._HYDRATE = JSON.parse(atob(`<%- Buffer.from(JSON.stringify(state)).toString('base64') %>`))</script>
+    <% } %>
+    <script type="module" src="/public/index.js"></script>
+  </body>
+</html>

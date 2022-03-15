@@ -1,0 +1,41 @@
+<div class="overlay">
+  <h1 class="brand">
+    paste<a href="/logout"><sup><%= id %></sup></a>
+  </h1>
+
+  <form class="options" method="post">
+    <label>
+      <select name="language">
+        <option value="javascript">javascript</option>
+        <option value="typescript">typescript</option>
+        <option value="text">text</option>
+      </select>
+    </label>
+
+    <label>
+      <input type="checkbox" name="encrypt" checked />
+      Encrypted
+    </label>
+
+    <label>
+      <input type="checkbox" name="ephemeral" />
+      Ephemeral
+    </label>
+
+    <label>
+      <select name="expire" option="1d">
+        <option value="1m">1 min</option>
+        <option value="1h">1 hour</option>
+        <option value="30m" selected>30 min</option>
+        <option value="1d">1 day</option>
+        <option value="30d">1 month</option>
+        <option value="365d">1 year</option>
+      </select>
+    </label>
+
+    <label>
+      <button class="button primary small">save <sup>^S</sup></button>
+    </label>
+  </form>
+</div>
+<div id="editor" class="editor"></div>

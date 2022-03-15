@@ -1,0 +1,26 @@
+$primary: #9580ff;
+$primary-active: darken($primary, 5%);
+$primary-hover: lighten($primary, 5%);
+$primary-focus: rgba($primary, 0.35);
+
+$red: #ff9580;
+$red-active: darken($red, 5%);
+$red-hover: lighten($red, 5%);
+$red-focus: rgba($red, 0.35);
+
+$colors: (
+  primary: $primary,
+  primary-active: $primary-active,
+  primary-hover: $primary-hover,
+  primary-focus: $primary-focus,
+  danger: $red,
+  danger-active: $red-active,
+  danger-hover: $red-hover,
+  danger-focus: $red-focus,
+);
+
+$background: #22212c;
+$background-dark: #14141b;
+$color: #f8f8f2;
+
+$border-focus: rgba(255, 255, 255, 0.19);

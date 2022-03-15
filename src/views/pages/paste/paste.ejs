@@ -1,0 +1,59 @@
+<div class="overlay">
+  <h1 class="brand">
+    paste<% if (state.profile !== -1) { %><a href="/logout"><sup><%= state.profile %></sup></a><% } %> <%= state.ephemeral ? '🔥🔥' : '' %>
+  </h1>
+
+  <div class="options view">
+    <div>
+      <span class="lhead">key</span>
+      <%= state.key %>
+    </div>
+
+    <div>
+      <span class="lhead">language</span>
+      <%= state.language %>
+    </div>
+
+    <% if (!state.ephemeral) { %>
+      <div>
+        <span class="lhead">expires</span>
+        <%= state.expiresPretty.toString() %>
+      </div>
+    <% } %>
+
+    <div class="row">
+      <span class="lhead">encrypted</span>
+      <input
+        type="checkbox"
+        name="encrypt"
+        disabled
+        <%= state.encrypted ? 'checked' : '' %>
+      />
+    </div>
+    
+    <div class="row">
+      <span class="lhead">ephemeral</span>
+      <input
+        type="checkbox"
+        name="ephemeral"
+        disabled
+        <%= state.ephemeral ? 'checked' : '' %>
+      />
+    </div>
+
+    <% if (state.profile === state.user_id) { %>
+      <div class="row">
+        <a href="/paste/burn/<%= state.key %>" name="burn" class="button danger small">burn 🔥</a>
+      </div>
+    <% } %>
+    <div class="row">
+      <a name="save-to-disk" class="button primary small">save</a>
+    </div>
+    <% if (!state.encrypted && !state.ephemeral) { %>
+    <div class="row">
+      <a href="/paste/raw/<%= state.key %>" target="_blank" name="raw" class="button primary small">raw</a>
+    </div>
+    <% } %>
+  </div>
+</div>
+<div id="editor" class="editor"></div>
