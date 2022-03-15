@@ -112,6 +112,11 @@ fastify
       : res.view('pages/error', { status, message })
   })
 
+setInterval(async () => {
+  await pool.query('DELETE FROM paste WHERE "delete_at" < now();')
+  fastify.log.info('purged pastes to be deleted')
+}, ms('5m'))
+
 export function listen() {
   fastify.listen(process.env.PORT || 3000, '0.0.0.0', (err, addr) => {
     if (err) {
