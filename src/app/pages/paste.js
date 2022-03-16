@@ -38,7 +38,12 @@ async function renderMarkdown(md) {
   document.body.appendChild($div)
 }
 
-async function onLoad() {
+async function onLoad(_key = location.hash) {
+  if (_HYDRATE.encrypted && !_key) {
+    document.getElementById('key-entry').style = ''
+    document.getElementById('editor').className = 'editor hidden'
+    return
+  }
   const res = await fetch(`/paste/hydrate/${_HYDRATE.key}`)
   const json = await res.json()
   window._HYDRATE = json
@@ -50,9 +55,9 @@ async function onLoad() {
   }
 
   if (_HYDRATE.encrypted) {
-    if (location.hash) {
+    if (_key) {
       try {
-        const key = location.hash.slice(location.hash.indexOf('#') + 1)
+        const key = _key.slice(_key.indexOf('#') + 1)
 
         data = await decryptData({
           key,
@@ -94,6 +99,15 @@ if (editor) {
 } else {
   document.addEventListener('load', onLoad)
 }
+
+document.getElementsByName('submit')[0].addEventListener('click', async (e) => {
+  e.preventDefault()
+  document.getElementById('key-entry').style = 'display: none;'
+  document.getElementById('editor').className = 'editor'
+  const $key = document.getElementsByName('key')[0]
+  await onLoad($key.value)
+  $key.value = ''
+})
 
 const $save = document.getElementsByName('save-to-disk')[0]
 
